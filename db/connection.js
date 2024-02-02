@@ -1,5 +1,5 @@
 import dbConfig from "../config/db.config.js";
-import Sequelize  from 'sequelize';
+import Sequelize from 'sequelize';
 import User from "../models/user.js";
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
@@ -19,6 +19,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.Users = User(sequelize, Sequelize);
+const Users = db.Users = User(sequelize, Sequelize);
 
+export { Users }
 export default db;
