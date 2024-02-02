@@ -58,7 +58,6 @@ const update_password = async (req, res) => {
   const { new_password, old_password, user_id } = req.body;
   const user = await Users.findOne({ where: { id: user_id } });
 
-  const error = user.wait.load
   if (new_password === old_password) {
     return res
       .status(400)
