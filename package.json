@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --inspect index.js",
+    "start:dev": "nodemon --inspect index.js",
+    "start:prod": "node index.js",
     "build": "babel .  -d dist --copy-files"
   },
   "author": "ali-aamir",

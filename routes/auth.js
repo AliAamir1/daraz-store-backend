@@ -18,13 +18,18 @@ import { body } from "express-validator";
 const authrouter = express.Router();
 
 authrouter.post("/signup", catchErrors(signup));
-authrouter.post("/login", catchErrors(login));
+authrouter.post(
+  "/login",
+  dataValidator.authIncomingDataValidation("login"),
+  confirmDataValidation, // this is used to validate the above validator
+  catchErrors(login)
+);
 authrouter.post("/refresh-token", catchErrors(refreshToken));
 authrouter.post(
   "/update_password",
   dataValidator.authIncomingDataValidation("update_password"),
   authenticateToken,
-  confirmDataValidation,
+  confirmDataValidation, //this is used to validate the above validator
   catchErrors(update_password)
 );
 

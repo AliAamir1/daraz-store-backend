@@ -2,29 +2,39 @@ import { body } from "express-validator";
 import { Users } from "../db/connection.js";
 import { strongPasswordValidator } from "../utils/auth.js";
 
+const validatePassword = (value, { req }) => {
+  const passwordState = strongPasswordValidator(value);
+  return passwordState.isValid;
+};
+
 const authIncomingDataValidation = (method) => {
+  console.log("Validation being hit");
   switch (method) {
     case "signup":
-      // username, email, password
-      return [];
-    case "login":
-      // email, password
       return [
-        body("password")
-          .notEmpty()
-          .custom((value) => {
-            console.log("strongPasswordValidator inner");
-            return false;
-          }),
-      ];
-    case "update_password":
-      // new_password, old_password, user_id
-      console.log("within update_passworddddddddddd");
-      return [
-        body("new_password").custom((value, { req }) => {
+        body("username").notEmpty().isString(),
+        body("password").custom((value, { req }) => {
           const passwordState = strongPasswordValidator(value);
           return passwordState.isValid;
         }),
+        body("email").notEmpty().isEmail(),
+      ];
+      return [];
+    case "login":
+      return [
+        body("password").custom((value, { req }) => {
+          const passwordState = strongPasswordValidator(value);
+          return passwordState.isValid;
+        }),
+        body("email").notEmpty().isEmail(),
+      ];
+    case "update_password":
+      return [
+        body("new_password").custom(validatePassword),
+        // body("new_password").custom((value, { req }) => {
+        //   const passwordState = strongPasswordValidator(value);
+        //   return passwordState.isValid;
+        // }),
         body("old_password").notEmpty().isString(),
         body("user_id").notEmpty(),
       ];
