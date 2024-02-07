@@ -1,7 +1,7 @@
 // authMiddleware.js
 
 import { verifyAccessToken, getAcessTokenFromRequest } from "../utils/auth.js";
-
+import { Users } from "../db/connection.js";
 const authenticateToken = (req, res, next) => {
   const token = getAcessTokenFromRequest(req);
   if (!token) {
@@ -18,10 +18,11 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-const isAdmin = (req, res, next) => {
-  const { roles } = req.user;
+const isAdmin = async (req, res, next) => {
+  const { id: userId } = req.user;
+  const user = await Users.findByPk(userId);
 
-  if (roles.includes("admin")) {
+  if (user.roles.includes("admin")) {
     next();
   } else {
     return res.sendStatus(403);

@@ -1,4 +1,5 @@
 import { authIncomingDataValidation } from "./auth.js";
+import { userValidation } from "./user.js";
 
-export { authIncomingDataValidation };
-export default { authIncomingDataValidation };
+export { authIncomingDataValidation, userValidation };
+export default { authIncomingDataValidation, userValidation };

@@ -29,6 +29,10 @@ const getById = async (req, res) => {
 const update = async (req, res) => {
   const { username } = req.body;
 
+  if (Object.keys(req.body).length === 0) {
+    return res.status(200).json({ message: "No changes made." });
+  }
+
   const { id: userId } = req.user;
 
   const existingUser = await Users.findByPk(userId);
@@ -38,7 +42,7 @@ const update = async (req, res) => {
   }
 
   existingUser.username = username;
-  await user.save();
+  await existingUser.save();
 
   return res.status(200).json({ data: existingUser });
 };
@@ -56,7 +60,7 @@ const remove = async (req, res) => {
   await existingUser.destroy();
 
   // Return success message
-  return res.status(204).send();
+  return res.status(204).json({ message: "User Deleted Successfully" });
 };
 
 export { get, getById, update, remove };

@@ -21,9 +21,9 @@ const authIncomingDataValidation = (method) => {
         body("old_password").notEmpty().isString(),
         body("user_id").notEmpty(),
       ];
+    default:
+      return [];
   }
-
-  return [];
 };
 
 export { authIncomingDataValidation };
