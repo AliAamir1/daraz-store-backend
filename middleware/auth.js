@@ -1,7 +1,7 @@
 // authMiddleware.js
 
-import { verifyAccessToken } from '../utils/auth.js';
-import { getAcessTokenFromRequest } from '../utils/auth.js';
+import { verifyAccessToken, getAcessTokenFromRequest } from "../utils/auth.js";
+
 const authenticateToken = (req, res, next) => {
   const token = getAcessTokenFromRequest(req);
   if (!token) {
@@ -10,7 +10,7 @@ const authenticateToken = (req, res, next) => {
 
   try {
     const user = verifyAccessToken(token);
-    console.log("user verified", user);
+    req.user = user;
     next();
   } catch (error) {
     console.log("error", error);
@@ -21,7 +21,7 @@ const authenticateToken = (req, res, next) => {
 const isAdmin = (req, res, next) => {
   const { roles } = req.user;
 
-  if (roles.includes('admin')) {
+  if (roles.includes("admin")) {
     next();
   } else {
     return res.sendStatus(403);

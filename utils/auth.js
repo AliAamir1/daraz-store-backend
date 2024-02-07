@@ -32,11 +32,6 @@ const generateHash = async (value) => {
   return hashedPassword;
 };
 
-// const strongPasswordValidator = (str) => {
-//   var re = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-//   return re.test(str);
-// };
-
 const strongPasswordValidator = (value) => {
   let errors = [];
   if (typeof value !== "string") {
@@ -58,6 +53,11 @@ const strongPasswordValidator = (value) => {
   return { isValid: true, message: "Password Is Strong" };
 };
 
+const validatePassword = (value, { req }) => {
+  const passwordState = strongPasswordValidator(value);
+  return passwordState.isValid;
+};
+
 export {
   generateAccessToken,
   generateRefreshToken,
@@ -66,4 +66,5 @@ export {
   getAcessTokenFromRequest,
   generateHash,
   strongPasswordValidator,
+  validatePassword,
 };

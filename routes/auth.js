@@ -11,25 +11,30 @@ import { confirmDataValidation } from "../handler/validationHandler.js";
 
 import { catchErrors } from "../handler/errorHandlers.js";
 
-import dataValidator from "../validators/index.js";
+import { authIncomingDataValidation } from "../validators/index.js";
 
 import { body } from "express-validator";
 
 const authrouter = express.Router();
 
-authrouter.post("/signup", catchErrors(signup));
+authrouter.post(
+  "/signup",
+  authIncomingDataValidation("signup"),
+  confirmDataValidation, // this is used to validate the above validator
+  catchErrors(signup)
+);
 authrouter.post(
   "/login",
-  dataValidator.authIncomingDataValidation("login"),
-  confirmDataValidation, // this is used to validate the above validator
+  authIncomingDataValidation("login"),
+  confirmDataValidation,
   catchErrors(login)
 );
 authrouter.post("/refresh-token", catchErrors(refreshToken));
 authrouter.post(
   "/update_password",
-  dataValidator.authIncomingDataValidation("update_password"),
+  authIncomingDataValidation("update_password"),
   authenticateToken,
-  confirmDataValidation, //this is used to validate the above validator
+  confirmDataValidation,
   catchErrors(update_password)
 );
 

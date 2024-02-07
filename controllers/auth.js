@@ -37,6 +37,7 @@ const login = async (req, res) => {
   res.json({
     access_token: loginState.access_token,
     refresh_token: loginState.refresh_token,
+    user: user.filterSensitiveData(),
   });
 };
 
@@ -67,11 +68,6 @@ const update_password = async (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  if (new_password.length < 4) {
-    return res.status(400).json({ message: "Password not strong enough" });
-  }
-
-  console.log("old_password", old_password, user.password, user);
   const isPasswordValid = await bcrypt.compare(old_password, user.password);
   if (!isPasswordValid) {
     return res.status(401).json({ message: "old password not valid" });
@@ -80,7 +76,6 @@ const update_password = async (req, res) => {
   user.password = new_password;
 
   await user.save();
-  console.log(" user.password", user.password);
   return res.status(200).json({ message: "Password Updated Successfully" });
 };
 

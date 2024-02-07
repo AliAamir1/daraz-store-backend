@@ -4,10 +4,16 @@ import { generateHash } from "../utils/auth.js";
 import { strongPasswordValidator } from "../utils/auth.js";
 const validRoles = ["user", "admin"]; // Define the valid roles
 
-export default (sequelize, Sequalize) => {
+export default (sequelize, Sequelize) => {
   const User = sequelize.define(
     "User",
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
+        primaryKey: true,
+      },
       username: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -84,13 +90,20 @@ export default (sequelize, Sequalize) => {
         beforeUpdate: async (user) => {
           if (user.changed("password")) {
             const temp = await generateHash(user.password);
-            console.log("hook user.password", user.password, temp);
             user.password = temp;
           }
         },
       },
     }
   );
+
+  User.prototype.filterSensitiveData = function () {
+    const userObject = this.toJSON();
+    delete userObject.password;
+    delete userObject.createdAt;
+    delete userObject.updatedAt;
+    return userObject;
+  };
 
   return User;
 };
