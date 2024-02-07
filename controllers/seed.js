@@ -1,4 +1,4 @@
-import { Users } from "../db/connection.js";
+import { Users, Products } from "../db/connection.js";
 import bcrypt from "bcrypt";
 
 // Seed function to create dummy users
@@ -66,4 +66,31 @@ const seedUsers = async (req, res) => {
   }
 };
 
-export { seedUsers };
+const seedProducts = async (req, res) => {
+  // Dummy products data
+  const dummyProducts = [];
+
+  // Generate 100 dummy products
+  for (let i = 1; i <= 100; i++) {
+    const product = {
+      name: `Product ${i}`,
+      price: parseFloat((Math.random() * (1000 - 10) + 10).toFixed(2)),
+      quantity: Math.floor(Math.random() * 50) + 1,
+      brand: `Brand ${i}`,
+    };
+
+    dummyProducts.push(product);
+  }
+
+  // Create dummy products
+  await Promise.all(
+    dummyProducts.map(async (product) => {
+      // Create product in the database
+      await Products.create(product);
+    })
+  );
+
+  return res.status(201).json({ message: "Product seed successful" });
+};
+
+export { seedUsers, seedProducts };

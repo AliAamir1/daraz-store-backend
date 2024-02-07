@@ -42,5 +42,5 @@ Bookings.belongsTo(Products, {
   },
 });
 
-export { Users };
+export { Users, Bookings, Products };
 export default db;

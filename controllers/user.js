@@ -60,7 +60,7 @@ const remove = async (req, res) => {
   await existingUser.destroy();
 
   // Return success message
-  return res.status(204).json({ message: "User Deleted Successfully" });
+  return res.status(200).json({ message: "User Deleted Successfully" });
 };
 
 export { get, getById, update, remove };
