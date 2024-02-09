@@ -1,10 +1,7 @@
-import { DataTypes } from "sequelize";
+import { query } from "express";
+import { DataTypes, Op } from "sequelize";
+import { bookingStatuses } from "../consts.js";
 
-const booking_statuses = {
-  PENDING: "pending",
-  Delivered: "delivered",
-  Cancelled: "cancelled",
-};
 export default (sequelize, Sequelize) => {
   const Booking = sequelize.define(
     "Booking",
@@ -17,11 +14,11 @@ export default (sequelize, Sequelize) => {
       },
 
       status: {
-        type: DataTypes.ENUM(Object.values(booking_statuses)),
-        defaultValue: booking_statuses.PENDING,
+        type: DataTypes.ENUM(Object.values(bookingStatuses)),
+        defaultValue: bookingStatuses.PENDING,
         allowNull: false,
       },
-      completed_at: {
+      completedAt: {
         type: DataTypes.DATE,
         defaultValue: null,
         allowNull: true,
@@ -34,5 +31,44 @@ export default (sequelize, Sequelize) => {
       },
     }
   );
+
+  Booking.getFiltered = async ({
+    completedDate,
+    createdDate,
+    status,
+    offset,
+    limit,
+    userId,
+    productId,
+    bookingId,
+  }) => {
+    const filterConditions = {
+      [Op.and]: [
+        (completedDate.start || completedDate.end) && {
+          completedAt: {
+            ...(completedDate.start && { [Op.gte]: completedDate.start }),
+            ...(completedDate.end && { [Op.lte]: completedDate.end }),
+          },
+        },
+        (createdDate.start || createdDate.end) && {
+          createdAt: {
+            ...(createdDate.start && { [Op.gte]: createdDate.start }),
+            ...(createdDate.end && { [Op.lte]: createdDate.end }),
+          },
+        },
+        status && { status: status },
+        userId && { userId },
+        productId && { productId },
+        bookingId && { id: bookingId },
+      ],
+    };
+
+    const filteredBooking = await Booking.findAll({
+      where: filterConditions,
+      offset: offset,
+      limit: limit,
+    });
+    return filteredBooking;
+  };
   return Booking;
 };
