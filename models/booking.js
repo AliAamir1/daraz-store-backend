@@ -1,11 +1,7 @@
 import { query } from "express";
 import { DataTypes, Op } from "sequelize";
+import { bookingStatuses } from "../consts.js";
 
-const booking_statuses = {
-  PENDING: "pending",
-  Delivered: "delivered",
-  Cancelled: "cancelled",
-};
 export default (sequelize, Sequelize) => {
   const Booking = sequelize.define(
     "Booking",
@@ -18,8 +14,8 @@ export default (sequelize, Sequelize) => {
       },
 
       status: {
-        type: DataTypes.ENUM(Object.values(booking_statuses)),
-        defaultValue: booking_statuses.PENDING,
+        type: DataTypes.ENUM(Object.values(bookingStatuses)),
+        defaultValue: bookingStatuses.PENDING,
         allowNull: false,
       },
       completed_at: {

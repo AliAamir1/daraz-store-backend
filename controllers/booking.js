@@ -1,5 +1,5 @@
 import { Bookings, Users, Products } from "../db/connection.js";
-
+import { bookingStatuses } from "../consts.js";
 // Get Bookings
 const get = async (req, res, next) => {
   const {
@@ -53,7 +53,9 @@ const update = async (req, res, next) => {
   if (!existingBooking) {
     return res.status(404).json({ error: "Booking not found" });
   }
-
+  if (updatedData.status === bookingStatuses.Delivered) {
+    updatedData.completed_at = new Date();
+  }
   await existingBooking.update(updatedData);
 
   return res.status(200).json({ data: existingBooking });
