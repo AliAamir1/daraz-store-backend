@@ -15,13 +15,20 @@ const get = async (req, res, next) => {
     completedStart,
     completedEnd,
   } = req.query;
-
-  const completedDate = { start: createdStart, end: createdEnd };
-  const createdDate = { start: completedStart, end: completedEnd };
+  console.log("boddyyyyyyyyyy", createdStart);
+  const completedDate = {
+    ...(createdStart && { start: new Date(createdStart) }),
+    ...(createdEnd && { end: new Date(createdEnd) }),
+  };
+  console.log("completedDate", completedDate);
+  const createdDate = {
+    ...(completedStart && { start: new Date(completedStart) }),
+    ...(completedEnd && { end: new Date(completedEnd) }),
+  };
 
   const offset = (page - 1) * limit;
 
-  const filteredBookings = Bookings.getFiltered({
+  const filteredBookings = await Bookings.getFiltered({
     completedDate,
     createdDate,
     status,

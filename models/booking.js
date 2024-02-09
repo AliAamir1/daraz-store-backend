@@ -18,7 +18,7 @@ export default (sequelize, Sequelize) => {
         defaultValue: bookingStatuses.PENDING,
         allowNull: false,
       },
-      completed_at: {
+      completedAt: {
         type: DataTypes.DATE,
         defaultValue: null,
         allowNull: true,
@@ -42,16 +42,17 @@ export default (sequelize, Sequelize) => {
     productId,
     bookingId,
   }) => {
+    console.log("completedDate", completedDate, "createdDate", createdDate);
     const filterConditions = {
       [Op.and]: [
-        (createdDate.start || createdDate.end) && {
-          created_at: {
-            ...(createdDate.start && { [Op.gte]: createdDate.start }),
-            ...(createdDate.end && { [Op.lte]: createdDate.end }),
+        (completedDate.start || completedDate.end) && {
+          completedAt: {
+            ...(completedDate.start && { [Op.gte]: completedDate.start }),
+            ...(completedDate.end && { [Op.lte]: completedDate.end }),
           },
         },
         (createdDate.start || createdDate.end) && {
-          created_at: {
+          createdAt: {
             ...(createdDate.start && { [Op.gte]: createdDate.start }),
             ...(createdDate.end && { [Op.lte]: createdDate.end }),
           },
@@ -68,6 +69,8 @@ export default (sequelize, Sequelize) => {
       offset: offset,
       limit: limit,
     });
+    console.log("filteredbookings", filteredBooking);
+    return filteredBooking;
   };
   return Booking;
 };
