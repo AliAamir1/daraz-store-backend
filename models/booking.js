@@ -42,7 +42,6 @@ export default (sequelize, Sequelize) => {
     productId,
     bookingId,
   }) => {
-    console.log("completedDate", completedDate, "createdDate", createdDate);
     const filterConditions = {
       [Op.and]: [
         (completedDate.start || completedDate.end) && {
@@ -69,7 +68,6 @@ export default (sequelize, Sequelize) => {
       offset: offset,
       limit: limit,
     });
-    console.log("filteredbookings", filteredBooking);
     return filteredBooking;
   };
   return Booking;

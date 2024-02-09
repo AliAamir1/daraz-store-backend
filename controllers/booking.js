@@ -15,13 +15,11 @@ const get = async (req, res, next) => {
     completedStart,
     completedEnd,
   } = req.query;
-  console.log("boddyyyyyyyyyy", createdStart);
-  const completedDate = {
+  const createdDate = {
     ...(createdStart && { start: new Date(createdStart) }),
     ...(createdEnd && { end: new Date(createdEnd) }),
   };
-  console.log("completedDate", completedDate);
-  const createdDate = {
+  const completedDate = {
     ...(completedStart && { start: new Date(completedStart) }),
     ...(completedEnd && { end: new Date(completedEnd) }),
   };

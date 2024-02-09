@@ -1,4 +1,5 @@
-import { Users, Products } from "../db/connection.js";
+import { where } from "sequelize";
+import { Users, Products, Bookings } from "../db/connection.js";
 import bcrypt from "bcrypt";
 
 // Seed function to create dummy users
@@ -93,4 +94,27 @@ const seedProducts = async (req, res) => {
   return res.status(201).json({ message: "Product seed successful" });
 };
 
-export { seedUsers, seedProducts };
+const seedBookings = async (req, res) => {
+  const users = await Users.findAll({ limit: 20 });
+  const products = await Products.findAll({ limit: 20 });
+
+  const seedBookings = [];
+
+  users.forEach((user) => {
+    products.forEach((product) => {
+      seedBookings.push({
+        userId: user.id,
+        productId: product.id,
+      });
+    });
+  });
+
+  await Promise.all(
+    seedBookings.map(async (booking) => {
+      await Bookings.create(booking);
+    })
+  );
+
+  return res.status(201).json({ message: "Seed Bookings created succesfully" });
+};
+export { seedUsers, seedProducts, seedBookings };
