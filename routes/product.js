@@ -3,6 +3,7 @@ import product from "../controllers/product.js";
 
 import { isAdmin } from "../middleware/auth.js";
 import { confirmDataValidation } from "../handler/validationHandler.js";
+import { catchErrors } from "../handler/errorHandlers.js";
 
 import { productValidator } from "../validators/product.js";
 
@@ -14,7 +15,7 @@ productRouter.get(
   productValidator("get"),
   confirmDataValidation,
   isAdmin,
-  product.get
+  catchErrors(product.get)
 );
 productRouter.get(
   "/:productId",
@@ -22,7 +23,7 @@ productRouter.get(
   productValidator("getById"),
   confirmDataValidation,
   isAdmin,
-  product.getById
+  catchErrors(product.getById)
 );
 productRouter.post(
   "/",
@@ -30,21 +31,21 @@ productRouter.post(
   productValidator("create"),
   confirmDataValidation,
   isAdmin,
-  product.create
+  catchErrors(product.create)
 );
 productRouter.put(
   "/:productId",
   isAdmin,
   productValidator("update"),
   confirmDataValidation,
-  product.update
+  catchErrors(product.update)
 );
 productRouter.delete(
   "/:productId",
   isAdmin,
   productValidator("remove"),
   confirmDataValidation,
-  product.remove
+  catchErrors(product.remove)
 );
 
 export default productRouter;
