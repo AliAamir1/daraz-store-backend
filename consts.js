@@ -3,3 +3,5 @@ export const bookingStatuses = {
   Delivered: "delivered",
   Cancelled: "cancelled",
 };
+
+export const bookingStatusList = Object.values(bookingStatuses);
