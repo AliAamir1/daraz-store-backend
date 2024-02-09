@@ -1,4 +1,4 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Op } from "sequelize";
 export default (sequelize, Sequelize) => {
   const Product = sequelize.define(
     "Product",
@@ -61,6 +61,53 @@ export default (sequelize, Sequelize) => {
       },
     }
   );
+
+  Product.getFiltered = async (querry) => {
+    const {
+      page = 1,
+      limit = 10,
+      name,
+      price_min,
+      price_max,
+      quantity_min,
+      quantity_max,
+      brand,
+    } = querry;
+    const offset = (page - 1) * limit;
+    const products = await Product.findAll({
+      where: {
+        [Op.and]: [
+          name && {
+            name: {
+              [Op.iLike]: `%${name.trim()}%`,
+            },
+          },
+          (price_max || price_min) && {
+            price: {
+              ...(price_min && { [Op.gte]: price_min }),
+              ...(price_max && { [Op.lte]: price_max }),
+            },
+          },
+
+          (quantity_min || quantity_max) && {
+            quantity: {
+              ...(quantity_min && { [Op.gte]: quantity_min }),
+              ...(quantity_max && { [Op.lte]: quantity_max }),
+            },
+          },
+          brand && {
+            brand: {
+              [Op.iLike]: `%${brand.trim()}%`,
+            },
+          },
+        ].filter(Boolean),
+      },
+      offset: offset,
+      limit: limit,
+    });
+
+    return products;
+  };
 
   return Product;
 };
