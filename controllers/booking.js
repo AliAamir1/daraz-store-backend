@@ -1,4 +1,4 @@
-import { Bookings, Users, Products } from "../db/connection";
+import { Bookings, Users, Products } from "../db/connection.js";
 
 // Get Bookings
 const get = async (req, res, next) => {
@@ -71,7 +71,8 @@ const remove = async (req, res, next) => {
 
   await existingBooking.destroy();
 
-  return res.status(204).json();
+  return res.status(200).json({ message: "Booking Deleted Successfully" });
 };
 
 export { get, create, update, remove };
+export default { get, create, update, remove };
