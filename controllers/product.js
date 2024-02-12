@@ -1,5 +1,6 @@
 import { Products } from "../db/connection.js";
 import { Op } from "sequelize";
+import { makeStripeProduct } from "../services/stripe.js";
 
 const get = async (req, res, next) => {
   const {
@@ -36,13 +37,10 @@ const getById = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   const productData = req.body;
-
-  try {
-    const createdProduct = await Products.create(productData);
-    return res.status(201).json({ data: createdProduct });
-  } catch (error) {
-    throw error;
-  }
+  const stripProduct = await makeStripeProduct(productData);
+  productData.paymentUrl = stripProduct.paymentLink.url;
+  const createdProduct = await Products.create(productData);
+  return res.status(201).json({ data: createdProduct});
 };
 
 const update = async (req, res, next) => {

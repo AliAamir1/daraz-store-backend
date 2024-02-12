@@ -8,6 +8,8 @@ import bookingRouter from "./booking.js";
 
 import { authenticateToken, isAdmin } from "../middleware/auth.js";
 
+import paymentRouter from "./payment.js";
+
 const router = express.Router();
 
 router.use("/auth", authrouter);
@@ -15,5 +17,6 @@ router.use("/user", authenticateToken, user_router);
 router.use("/product", authenticateToken, productRouter);
 router.use("/seed", authenticateToken, isAdmin, seedRouter);
 router.use("/booking", authenticateToken, bookingRouter);
+router.use("/payment", paymentRouter);
 
 export default router;
