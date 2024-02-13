@@ -7,10 +7,13 @@ import "express-async-errors";
 import db from "./db/connection.js";
 import router from "./routes/router.js";
 
+import webhookRouter from "./routes/webhook.js";
+
 const PORT = process.env.SERVER_PORT || 6000;
 
 const app = express();
 app.use(cors());
+app.use("/webhook", webhookRouter);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

@@ -1,7 +1,7 @@
 import { query } from "express";
 import { DataTypes, Op } from "sequelize";
 import { bookingStatuses } from "../consts.js";
-
+import { BookingProducts, Products } from "../db/connection.js";
 export default (sequelize, Sequelize) => {
   const Booking = sequelize.define(
     "Booking",
@@ -22,6 +22,10 @@ export default (sequelize, Sequelize) => {
         type: DataTypes.DATE,
         defaultValue: null,
         allowNull: true,
+      },
+      totalAmount: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
       },
     },
     {
@@ -63,12 +67,30 @@ export default (sequelize, Sequelize) => {
       ],
     };
 
+    const includeConditions = [
+      {
+        model: BookingProducts,
+        as: 'bookingProducts',
+        scopes: 'associated',
+        attributes: {
+          exclude : ["createdAt", 'updatedAt', 'bookingId', 'productId']
+        },
+        include: [
+          {
+            model: Products,
+          },
+        ],
+      },
+      
+    ]
     const filteredBooking = await Booking.findAll({
       where: filterConditions,
+      include: includeConditions,
       offset: offset,
       limit: limit,
     });
     return filteredBooking;
   };
+
   return Booking;
 };

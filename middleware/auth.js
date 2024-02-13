@@ -2,14 +2,15 @@
 
 import { verifyAccessToken, getAcessTokenFromRequest } from "../utils/auth.js";
 import { Users } from "../db/connection.js";
-const authenticateToken = (req, res, next) => {
+const authenticateToken = async (req, res, next) => {
   const token = getAcessTokenFromRequest(req);
   if (!token) {
     return res.sendStatus(401);
   }
 
   try {
-    const user = verifyAccessToken(token);
+    const { id: userId } = verifyAccessToken(token);
+    const user = await Users.findByPk(userId);
     req.user = user;
     next();
   } catch (error) {

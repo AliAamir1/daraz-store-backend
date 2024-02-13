@@ -53,16 +53,6 @@ export default (sequelize, Sequelize) => {
           },
         },
       },
-      paymentUrl: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: true,
-        // validate: {
-        //   notNull: {
-        //     msg : "Payment Link cannot be null"
-        //   }
-        // }
-      }
     },
     {
       sequelize,

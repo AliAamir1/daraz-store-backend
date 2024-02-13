@@ -1,4 +1,4 @@
-import { Bookings } from "../db/connection.js";
+import { Bookings, Users, Products } from "../db/connection.js";
 import stripe from "../config/stripe.config.js";
 
 const countryCodes = [
@@ -303,4 +303,58 @@ const makeProduct = async (req, res, next) => {
   res.json({ product, price, shippingRate, paymentLink });
 };
 
-export { makePaymentIntent, makeProduct };
+const generateCheckoutSession = async (req, res, next) => {
+  const user = req.user;
+  const { cart } = req.body;
+
+  if (!(cart || cart.length === 0)) {
+    return res
+      .status(400)
+      .json({ message: "Cart must have atleast one product" });
+  }
+
+  const productIds = cart.map((item) => item.productId);
+  let products = await Products.findAll({
+    where: {
+      id: productIds,
+    },
+  });
+
+  products = products.map((product) => {
+    const matchingItem = cart.find((item) => item.productId === product.id);
+    if (matchingItem.quantity > product.quantity) {
+      throw new Error("Product Items cannot be more than Available Stock");
+    }
+    return {
+      ...product.toJSON(),
+      orderQuantity: matchingItem.quantity,
+    };
+  });
+
+  const items = products.map((product) => {
+    return {
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: product.name,
+        },
+        unit_amount: product.price * 100, // Amount in cents (e.g., $100.00)
+      },
+      quantity: product.orderQuantity,
+    };
+  });
+
+  const session = await stripe.checkout.sessions.create({
+    success_url: "http://localhost:3000",
+    line_items: items,
+    mode: "payment",
+    metadata: {
+      userId: user.id,
+      orderDetails: JSON.stringify(cart),
+    },
+  });
+
+  res.status(200).json({ data: session });
+};
+
+export { makePaymentIntent, makeProduct, generateCheckoutSession };

@@ -40,7 +40,7 @@ const create = async (req, res, next) => {
   const stripProduct = await makeStripeProduct(productData);
   productData.paymentUrl = stripProduct.paymentLink.url;
   const createdProduct = await Products.create(productData);
-  return res.status(201).json({ data: createdProduct});
+  return res.status(201).json({ data: createdProduct, stripe: stripProduct });
 };
 
 const update = async (req, res, next) => {
