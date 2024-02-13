@@ -1,7 +1,6 @@
 import stripe from "../config/stripe.config.js";
 import { generateBooking } from "../services/booking.js";
-const endpointSecret =
-  "whsec_56255ba49f9be29e63600c9cd3e6e87687f675535552fcaa37cc33be64dc53f9";
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
 
 // app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
 const stripeWebhook = (request, response) => {

@@ -11,6 +11,10 @@ const authenticateToken = async (req, res, next) => {
   try {
     const { id: userId } = verifyAccessToken(token);
     const user = await Users.findByPk(userId);
+    if (!user)
+    {
+      res.status(401).json({message: "Token does not contain a valid user"})
+    }
     req.user = user;
     next();
   } catch (error) {
