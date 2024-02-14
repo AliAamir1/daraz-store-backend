@@ -2,17 +2,13 @@ import stripe from "../config/stripe.config.js";
 import { generateBooking } from "../services/booking.js";
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
 
-// app.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
 const stripeWebhook = (request, response) => {
-  console.log("stripe webhook is being called");
   const sig = request.headers["stripe-signature"];
-  console.log(sig, "signature");
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
   } catch (err) {
-    console.log("Webhook Error", err.message);
     response.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
@@ -29,7 +25,6 @@ const stripeWebhook = (request, response) => {
       const orderDetails =
         checkoutSessionCompleted.object.metadata.orderDetails;
       const totalAmount =  checkoutSessionCompleted.object.amount_total;
-      console.log("checkoutSessionCompleted.object;", checkoutSessionCompleted.object);
       if (!generateBooking(userId, orderDetails, totalAmount)) {
         console.log("Error occured while generating booking");
       }
